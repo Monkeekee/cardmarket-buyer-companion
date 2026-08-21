@@ -16,6 +16,12 @@ Newest first. Do not rewrite old entries; add a new one if a decision flips.
 
 ---
 
+## 2026-08-21 — Order-page toolbar popup + local e2e (`TBD`)
+
+- **Context:** First code. Chrome cannot open the action popup on navigation. E2e must not hit live Cardmarket. Opening `popup.html` as a tab (Playwright) would steal “active tab” if we only looked at `active: true`.
+- **Decision:** Toolbar popup on click. Match `/{locale}/Magic/Orders/{id}` only. Tab pick skips non-http(s), then active else first http(s) in the window. Playwright + local HTML via `context.route` on `www.cardmarket.com`. Chromium e2e only, no CI. WXT + TS, `tabs` permission, no content script yet.
+- **Consequences:** No auto-open overlay. Firefox is buildable but not e2e’d. Fill this hash when the feature is committed.
+
 ## Baseline (pre-code, 2026-08-21)
 
 Kickoff interview. Treat as Decision 0 until the first feature commit.

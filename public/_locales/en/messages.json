@@ -1,0 +1,14 @@
+{
+  "extName": {
+    "message": "CM-MTG-Companion V1"
+  },
+  "extDescription": {
+    "message": "Diff an imported Magic list against Cardmarket purchases."
+  },
+  "popupPlaceholder": {
+    "message": "Cards from orders shall appear here"
+  },
+  "popupOpenOrder": {
+    "message": "Open a Magic order page on Cardmarket."
+  }
+}

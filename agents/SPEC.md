@@ -7,32 +7,33 @@ What exists from the first implementation onward. Product baseline is in `DECISI
 - **MV3** extension, **Chrome + Firefox**, sideloaded.
 - Stack: **WXT + TypeScript**, no UI framework unless a screen clearly needs one.
 - **No app server.** No official Cardmarket API. No Scryfall (or other) name resolver in v1.
-- UI: **toolbar popup only** (EN + FR). No injected purchases UI in v1.
+- UI: **toolbar popup on click** (EN + FR). Browsers will not auto-open the popup on navigation. No injected purchases UI.
 
-## Pieces
+## Milestone: order URL gate (current)
 
 | Piece | Role |
 | --- | --- |
-| **Popup** | Import list, trigger “read this purchases tab”, show per-card have/need, persist list. |
-| **Content script** | Isolated world on Cardmarket **purchases** URLs (any locale path, Magic). Reads **DOM + the page’s own XHR/JSON**. Does not click. |
-| **Messaging** | Popup ↔ content script: “give me parsed purchases on this tab”. If the tab is missing/wrong, fail visibly. |
-| **Purchases parser** | Normalize whatever the purchases page already loaded into `{ cardName, qty, orderState, … }`. Visible tab only — no pagination crawl, no background `fetch` to Cardmarket. |
-| **List parser** | Plain names (optional leading qty). Moxfield **pasted text**. Moxfield **URL fetch** is post-v1 (same parsers once you have text). |
+| **Popup** | Title `CM-MTG-Companion V1`. If the relevant tab is a Magic order **detail** URL, placeholder copy; else “open an order page”. |
+| **URL matcher** | `lib/order-url.ts`: `https?://www.cardmarket.com/{locale}/Magic/Orders/{digits}` only. |
+| **Tab pick** | `tabs.query({ currentWindow: true })`, ignore non-http(s) (so `chrome-extension://` popup-as-tab does not win). Prefer active http(s) tab, else first http(s) tab. |
+| **i18n** | `public/_locales/{en,fr}/messages.json`. |
+| **Unit tests** | Vitest on the matcher. |
+| **E2e** | Playwright 1.48 (macOS 12), Chromium, load unpacked `.output/chrome-mv3`. Mock `https://www.cardmarket.com/**` with local HTML. Empty background SW so tests can read the extension id. No live Cardmarket. No CI. |
+
+Permissions now: **`tabs`**. No host permissions, no content script, no `storage` yet.
+
+## Later pieces (not started)
+
+| Piece | Role |
+| --- | --- |
+| **Content script** | Isolated world on Cardmarket purchases/order URLs (any locale path, Magic). Reads **DOM + the page’s own XHR/JSON**. Does not click. |
+| **Messaging** | Popup ↔ content script: “give me parsed purchases on this tab”. |
+| **Purchases parser** | `{ cardName, qty, orderState, … }`. Visible tab only. |
+| **List parser** | Plain names; Moxfield pasted text; Moxfield URL after v1. |
 | **Name normalizer** | Case-fold, trim, punctuation, `//` DFC split. No oracle API. |
-| **Diff** | Join on normalized **name**. Need N from the list; have = sum of matching purchase qtys; stillNeed = max(0, N − have). Extras are not a separate bucket. |
-| **storage.local** | Imported list (and last diff if cheap to keep). Nothing in `sync`. |
-| **i18n** | Extension strings EN/FR (`chrome.i18n` or WXT equivalent). Scraping must not key off English CM UI strings. |
-
-## Permissions (intent)
-
-- Host access limited to Cardmarket (content script + optional later Moxfield URL).
-- `storage`.
-- Enough tab access to talk to the **active** (or explicitly chosen) purchases tab — prefer the smallest MV3 permission that works on both browsers.
+| **Diff** | Join on normalized name; qty cap. |
+| **storage.local** | Imported list (and last diff if cheap). |
 
 ## Out of v1 (do not add “while you’re there”)
 
-Cart/checkout automation, seller ranking, landed-cost optimizer, price watch, sales history, full purchase-history crawl, store listing, Safari.
-
-## Check
-
-One small runnable check that fails if name normalize + qty cap diff is wrong (pure TS, no browser). Parser fixtures against CM HTML/JSON when we have a real sample.
+Cart/checkout automation, seller ranking, landed-cost optimizer, price watch, sales history, full purchase-history crawl, store listing, Safari, GitHub Actions e2e, live Cardmarket in tests.

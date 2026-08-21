@@ -4,40 +4,50 @@ A browser extension for **you**: import a Magic list, open your Cardmarket **pur
 
 Not affiliated with Cardmarket. Read-only: it does not add to cart or place orders.
 
-## What it does
+## What it does now
 
-1. Import a list (plain card names, or a pasted Moxfield decklist; a Moxfield URL is optional later).
-2. With a Cardmarket **purchases** tab open, read the orders **already loaded on that page**.
-3. Diff by **card name** (printings are interchangeable). Quantities: you need N, extras past N just count as “have enough”.
-4. Show a **per-card** summary: have vs still need.
-5. Keep the imported list on **this machine only**.
+Click the toolbar icon. If a tab in that window is a Magic **order detail** page (`/{locale}/Magic/Orders/{id}`), the popup title is **CM-MTG-Companion V1** and the body is the placeholder for cards. Otherwise it asks you to open such a page.
 
-Purchase **state** (paid, shipped, cancelled, …) is labeled, not ignored. v1 does not walk pagination, fetch orders in the background, or optimize carts.
+List import and purchase diffs are not built yet.
 
-**Games:** Magic: The Gathering. **UI language:** English and French. Cardmarket itself can be in any locale; the extension must not assume English page copy.
+**Games:** Magic: The Gathering. **UI language:** English and French. Cardmarket itself can be in any locale.
 
 ## Install (sideload)
 
-Stores are a later maybe. For now:
+Needs Node.js. Stores are a later maybe.
 
-- **Chrome / Edge:** clone this repo, build, then Load unpacked on the output folder.
-- **Firefox:** clone, build, then Load Temporary Add-on (`about:debugging`) on the manifest.
+```bash
+npm install
+npm run build
+```
 
-Exact build commands live with the extension once the first code lands (see `agents/SPEC.md`).
+- **Chrome / Edge:** `chrome://extensions` → Developer mode → Load unpacked → `.output/chrome-mv3`
+- **Firefox:** `npm run build:firefox`, then `about:debugging` → This Firefox → Load Temporary Add-on → `.output/firefox-mv3/manifest.json`
 
-You must be logged into Cardmarket in that browser. The purchases tab has to contain the rows you care about.
+`npm run dev` rebuilds while you iterate (Chrome).
+
+You must be logged into Cardmarket for real orders. The extension does not place orders.
+
+## Tests
+
+```bash
+npm test          # unit (URL matcher)
+npm run test:e2e  # Playwright + unpacked Chrome extension; local HTML mock, not live Cardmarket
+```
+
+E2e is Chromium-only and is not run in CI. First run may need `npx playwright install chromium`. Playwright is pinned to **1.48** so it still installs Chromium on macOS 12 (Monterey).
 
 ## Privacy
 
 - No backend, no telemetry in v1.
-- List + last diff: `storage.local` on your machine.
-- Cardmarket data is read from the open purchases tab (page + the site’s own XHR). The extension does not call Cardmarket APIs with stored passwords.
+- No Cardmarket fetch from the popup yet (URL of open tabs only).
+- Later: list + last diff in `storage.local` on your machine.
 
 ## Contributing
 
 This is a personal tool. **Issues are welcome**; there is no promise they will be triaged or that PRs will merge.
 
-If you do send a PR: stay in scope (read-only, purchases vs imported list, MTG). License is [MPL-2.0](LICENSE).
+If you do send a PR: stay in scope (read-only, MTG, purchases vs imported list). License is [MPL-2.0](LICENSE).
 
 ## Agents / docs
 

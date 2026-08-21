@@ -1,0 +1,14 @@
+{
+  "extName": {
+    "message": "CM-MTG-Companion V1"
+  },
+  "extDescription": {
+    "message": "Compare une liste Magic importée aux achats Cardmarket."
+  },
+  "popupPlaceholder": {
+    "message": "Les cartes des commandes apparaîtront ici"
+  },
+  "popupOpenOrder": {
+    "message": "Ouvrez une page de commande Magic sur Cardmarket."
+  }
+}

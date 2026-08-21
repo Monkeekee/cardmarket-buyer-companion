@@ -1,0 +1,7 @@
+node_modules
+.output
+.wxt
+.tools
+playwright-report
+test-results
+e2e/.pw-user

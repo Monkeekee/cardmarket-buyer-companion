@@ -1,0 +1,22 @@
+{
+  "name": "cardmarket-buyer-companion",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
+    "compile": "tsc --noEmit",
+    "postinstall": "wxt prepare",
+    "test": "vitest run",
+    "test:e2e": "npm run build && playwright test --config e2e/playwright.config.ts"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.48.2",
+    "@types/chrome": "^0.0.270",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0",
+    "wxt": "^0.19.0"
+  }
+}
